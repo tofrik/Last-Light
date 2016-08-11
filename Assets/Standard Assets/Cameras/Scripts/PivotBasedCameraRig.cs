@@ -24,5 +24,9 @@ namespace UnityStandardAssets.Cameras
             m_Cam = GetComponentInChildren<Camera>().transform;
             m_Pivot = m_Cam.parent;
         }
+        public void LockOn(Transform target)
+        {
+            m_Pivot.transform.position = target.position;
+        }
     }
 }

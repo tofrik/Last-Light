@@ -24,6 +24,9 @@ namespace UnityStandardAssets.Cameras
         private Vector3 m_RollUp = Vector3.up;// The roll of the camera around the z axis ( generally this will always just be up )
 
 
+        public bool m_LockedOn = false;
+        public Transform m_PlayerPosition;
+
         protected override void FollowTarget(float deltaTime)
         {
             // if no target, or no time passed then we quit early, as there is nothing to do
@@ -103,5 +106,7 @@ namespace UnityStandardAssets.Cameras
             m_RollUp = m_RollSpeed > 0 ? Vector3.Slerp(m_RollUp, targetUp, m_RollSpeed*deltaTime) : Vector3.up;
             transform.rotation = Quaternion.Lerp(transform.rotation, rollRotation, m_TurnSpeed*m_CurrentTurnAmount*deltaTime);
         }
+
+        
     }
 }

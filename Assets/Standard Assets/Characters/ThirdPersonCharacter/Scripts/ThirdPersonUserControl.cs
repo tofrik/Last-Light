@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using UnityStandardAssets.Cameras;
 
 namespace UnityStandardAssets.Characters.ThirdPerson
 {
@@ -13,9 +14,13 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private Vector3 m_Move;
         private bool m_Jump;                      // the world-relative desired move direction, calculated from the camForward and user input.
 
-        
+        public GameObject camera;
+        public FreeLookCam freeCamScript;
+
         private void Start()
         {
+            camera = GameObject.FindGameObjectWithTag("BaseCamera");
+            freeCamScript = camera.GetComponentInChildren<FreeLookCam>();
             // get the transform of the main camera
             if (Camera.main != null)
             {
@@ -50,6 +55,13 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             float v = CrossPlatformInputManager.GetAxis("Vertical");
             bool crouch = Input.GetKey(KeyCode.C);
 
+            if(freeCamScript.target != null && freeCamScript.m_distanceToTarget < 1)
+            {
+                if(v > 0)
+                {
+                    v = 0;
+                }
+            }
             // calculate move direction to pass to character
             if (m_Cam != null)
             {

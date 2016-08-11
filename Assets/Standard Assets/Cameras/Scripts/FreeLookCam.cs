@@ -28,6 +28,12 @@ namespace UnityStandardAssets.Cameras
 		private Quaternion m_PivotTargetRot;
 		private Quaternion m_TransformTargetRot;
 
+        public float cameraRadius = 5;
+
+        public bool m_LockedOn = false;
+        public Transform target;
+        public float m_distanceToTarget;
+
         protected override void Awake()
         {
             base.Awake();
@@ -38,12 +44,31 @@ namespace UnityStandardAssets.Cameras
 
 	        m_PivotTargetRot = m_Pivot.transform.localRotation;
 			m_TransformTargetRot = transform.localRotation;
+            //m_PlayerPosition = m_Target;
         }
 
 
         protected void Update()
         {
-            HandleRotationMovement();
+            float deltaTime = Time.deltaTime;
+            
+            
+            if (m_LockedOn)
+            {
+                
+                Vector3 temp = target.position;
+                HandleRotationMovement();
+                temp.y = transform.position.y;
+                m_distanceToTarget = (temp - transform.position).magnitude;
+                
+                transform.LookAt(temp);
+                
+                
+            }
+            else
+            {
+                HandleRotationMovement();
+            }
             if (m_LockCursor && Input.GetMouseButtonUp(0))
             {
                 Cursor.lockState = m_LockCursor ? CursorLockMode.Locked : CursorLockMode.None;
@@ -63,7 +88,16 @@ namespace UnityStandardAssets.Cameras
         {
             if (m_Target == null) return;
             // Move the rig towards target position.
-            transform.position = Vector3.Lerp(transform.position, m_Target.position, deltaTime*m_MoveSpeed);
+           
+            if(m_LockedOn)
+            {
+                Vector3 targetPosition = new Vector3(1, 0, 0);
+                transform.position = Vector3.Lerp(transform.position, m_Target.position + targetPosition, deltaTime * m_MoveSpeed);
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(transform.position, m_Target.position, deltaTime * m_MoveSpeed);
+            }
         }
 
 
@@ -110,6 +144,11 @@ namespace UnityStandardAssets.Cameras
 				m_Pivot.localRotation = m_PivotTargetRot;
 				transform.localRotation = m_TransformTargetRot;
 			}
+        }
+
+        void setTarget(Transform newTarget)
+        {
+            m_Target = newTarget;
         }
     }
 }
