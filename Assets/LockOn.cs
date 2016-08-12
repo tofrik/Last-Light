@@ -25,7 +25,7 @@ namespace UnityStandardAssets.Cameras
         // Update is called once per frame
         void Update()
         {
-            if (characterActions.LockOn.WasPressed == true)
+            if (characterActions.LockOn.WasPressed == true && freeLookScript.m_LockedOn == false)
             {
                 Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
@@ -47,6 +47,10 @@ namespace UnityStandardAssets.Cameras
                 {
                     print("Im looking at nothing");
                 }
+            }
+            else if(characterActions.LockOn.WasPressed == true && freeLookScript.m_LockedOn == true)
+            {
+                freeLookScript.m_LockedOn = false;
             }
         }
     }

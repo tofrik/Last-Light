@@ -59,7 +59,7 @@ namespace UnityStandardAssets.Cameras
                 Vector3 temp = target.position;
                 HandleRotationMovement();
                 temp.y = transform.position.y;
-                m_distanceToTarget = (temp - transform.position).magnitude;
+                m_distanceToTarget = Vector3.Distance(temp, m_Target.transform.position);
                 
                 transform.LookAt(temp);
                 

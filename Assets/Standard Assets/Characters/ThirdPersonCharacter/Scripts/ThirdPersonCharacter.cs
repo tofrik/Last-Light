@@ -29,9 +29,12 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		Vector3 m_CapsuleCenter;
 		CapsuleCollider m_Capsule;
 		bool m_Crouching;
-        
 
-		void Start()
+
+        public bool closeMode = false;
+        public Transform target;
+
+        void Start()
 		{
 			m_Animator = GetComponent<Animator>();
 			m_Rigidbody = GetComponent<Rigidbody>();
@@ -182,6 +185,15 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			// help the character turn faster (this is in addition to root rotation in the animation)
 			float turnSpeed = Mathf.Lerp(m_StationaryTurnSpeed, m_MovingTurnSpeed, m_ForwardAmount);
 			transform.Rotate(0, m_TurnAmount * turnSpeed * Time.deltaTime, 0);
+
+            // todo - if we have a target and are close, always orient to face it
+            if(closeMode)
+            {
+                //float temp = (target.transform.position.y - transform.position.y);
+                //Transform tempTransform = transform;
+                //tempTransform.position -= new Vector3(0, temp, 0);
+                //transform.LookAt(target);
+            }
 		}
 
 

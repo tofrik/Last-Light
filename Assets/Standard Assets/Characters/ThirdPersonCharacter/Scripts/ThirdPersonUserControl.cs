@@ -16,6 +16,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         public GameObject camera;
         public FreeLookCam freeCamScript;
+        public bool canPushMirror = false;
 
         private void Start()
         {
@@ -50,38 +51,60 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         // Fixed update is called in sync with physics
         private void FixedUpdate()
         {
+            Debug.DrawLine(transform.position, transform.forward);
             // read inputs
             float h = CrossPlatformInputManager.GetAxis("Horizontal");
             float v = CrossPlatformInputManager.GetAxis("Vertical");
             bool crouch = Input.GetKey(KeyCode.C);
 
-            if(freeCamScript.target != null && freeCamScript.m_distanceToTarget < 1)
+            bool closeMode = false;
+            m_Character.closeMode = false;
+            if(freeCamScript.target != null && freeCamScript.m_distanceToTarget < 1.5f)
             {
                 if(v > 0)
                 {
                     v = 0;
+                    closeMode = true;
+                    m_Character.closeMode = true;
+                    m_Character.target = freeCamScript.target;
                 }
             }
+            if (canPushMirror)
+            {
+                h = 0;
+                v = 0;
+                crouch = false;
+            }
+
+            // fine a local forwards and right direction. Default to world space
+            Vector3 fwd = Vector3.forward;
+            Vector3 right = Vector3.right;
+
             // calculate move direction to pass to character
             if (m_Cam != null)
             {
                 // calculate camera relative direction to move:
-                m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
-                m_Move = v*m_CamForward + h*m_Cam.right;
+                fwd = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
+                right = m_Cam.right;
             }
-            else
+
+            if (closeMode)
             {
-                // we use world-relative directions in the case of no main camera
-                m_Move = v*Vector3.forward + h*Vector3.right;
+                fwd = (freeCamScript.target.position - transform.position).normalized;
+                right = Vector3.Cross(Vector3.up, fwd);
             }
+
+            m_Move = v * fwd + h * right;
 #if !MOBILE_INPUT
-			// walk speed multiplier
-	        if (Input.GetKey(KeyCode.LeftShift)) m_Move *= 0.5f;
+            // walk speed multiplier
+            if (Input.GetKey(KeyCode.LeftShift)) m_Move *= 0.5f;
 #endif
 
             // pass all parameters to the character control script
+            
             m_Character.Move(m_Move, crouch, m_Jump);
             m_Jump = false;
+            
         }
     }
 }
