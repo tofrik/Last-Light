@@ -8,6 +8,7 @@ TagManager:
   - BaseCamera
   - Mirror
   - MirrorBase
+  - LightSource
   layers:
   - Default
   - TransparentFX

@@ -17,6 +17,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         public GameObject camera;
         public FreeLookCam freeCamScript;
         public bool canPushMirror = false;
+        public bool closeMode = false;
+        public bool lockedOn = false;
 
         private void Start()
         {
@@ -51,24 +53,16 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         // Fixed update is called in sync with physics
         private void FixedUpdate()
         {
+            lockedOn = freeCamScript.m_LockedOn;
             Debug.DrawLine(transform.position, transform.forward);
             // read inputs
             float h = CrossPlatformInputManager.GetAxis("Horizontal");
             float v = CrossPlatformInputManager.GetAxis("Vertical");
             bool crouch = Input.GetKey(KeyCode.C);
 
-            bool closeMode = false;
+            
             m_Character.closeMode = false;
-            if(freeCamScript.target != null && freeCamScript.m_distanceToTarget < 1.5f)
-            {
-                if(v > 0)
-                {
-                    v = 0;
-                    closeMode = true;
-                    m_Character.closeMode = true;
-                    m_Character.target = freeCamScript.target;
-                }
-            }
+            
             if (canPushMirror)
             {
                 h = 0;

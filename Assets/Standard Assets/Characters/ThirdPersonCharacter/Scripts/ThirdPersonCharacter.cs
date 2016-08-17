@@ -187,13 +187,16 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			transform.Rotate(0, m_TurnAmount * turnSpeed * Time.deltaTime, 0);
 
             // todo - if we have a target and are close, always orient to face it
+            
             if(closeMode)
             {
-                //float temp = (target.transform.position.y - transform.position.y);
-                //Transform tempTransform = transform;
+                float temp = (target.transform.position.y - transform.position.y);
+                Transform tempTransform = transform;
                 //tempTransform.position -= new Vector3(0, temp, 0);
-                //transform.LookAt(target);
+                transform.LookAt(target);
+                transform.rotation = new Quaternion(0, transform.rotation.y, 0, 0);
             }
+            
 		}
 
 

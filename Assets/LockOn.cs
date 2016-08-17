@@ -11,6 +11,8 @@ namespace UnityStandardAssets.Cameras
         public AutoCam autoCamScript;
 
         public Camera mainCamera;
+
+        public bool lockedOn = false;
         // Use this for initialization
         void Awake()
         {
@@ -36,6 +38,7 @@ namespace UnityStandardAssets.Cameras
                     if (hit.transform.tag == "Enemy")
                     {
                         freeLookScript.m_LockedOn = true;
+                        lockedOn = true;
                         freeLookScript.target = hit.transform;
                         //freeLookScript.enabled = false;
                         //autoCamScript.enabled = true;
@@ -51,6 +54,7 @@ namespace UnityStandardAssets.Cameras
             else if(characterActions.LockOn.WasPressed == true && freeLookScript.m_LockedOn == true)
             {
                 freeLookScript.m_LockedOn = false;
+                lockedOn = false;
             }
         }
     }
