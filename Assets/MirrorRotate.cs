@@ -8,8 +8,8 @@ using UnityStandardAssets.Cameras;
 public class MirrorRotate : MonoBehaviour
 {
     MyCharacterActions characterActions;
-    GameObject mirror;
-    GameObject mirrorBase;
+    public GameObject mirror;
+    public GameObject mirrorBase;
     GameObject player;
     ThirdPersonUserControl thirdPersonScript;
     FreeLookCam freeLookScript;
@@ -35,8 +35,8 @@ public class MirrorRotate : MonoBehaviour
 
         player = GameObject.FindGameObjectWithTag("Player");
         thirdPersonScript = player.GetComponentInChildren<ThirdPersonUserControl>();
-        mirrorBase = GameObject.FindGameObjectWithTag("MirrorBase");
-        mirror = GameObject.FindGameObjectWithTag("Mirror");
+       // mirrorBase = GameObject.FindGameObjectWithTag("MirrorBase");
+
     }
 
     // Update is called once per frame
@@ -49,7 +49,7 @@ public class MirrorRotate : MonoBehaviour
             {
                 thirdPersonScript.canPushMirror = true;
                 freeLookScript.SetTarget(mirrorBase.transform);
-                wallClipScript.closestDistance = 4;
+                wallClipScript.closestDistance = 5;
             }
         }
         else
