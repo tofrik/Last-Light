@@ -16,6 +16,8 @@ public class MirrorRotate : MonoBehaviour
     ProtectCameraFromWallClip wallClipScript;
     GameObject mainCamera;
     bool canPushMirror = false;
+    float timer = 0;
+    bool timerSet = false;
 
 	// Use this for initialization
 	void Start ()
@@ -42,17 +44,19 @@ public class MirrorRotate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (thirdPersonScript.canPushMirror == false)
-        {
 
-            if (characterActions.RotateMirror.WasPressed == true && canPushMirror == true)
+        if(timerSet == true)
+        {
+            thirdPersonScript.canPushMirror = false;
+            timer += Time.deltaTime;
+            if(timer >= 1.0f)
             {
-                thirdPersonScript.canPushMirror = true;
-                freeLookScript.SetTarget(mirrorBase.transform);
-                wallClipScript.closestDistance = 5;
+                timerSet = false;
+                timer = 0f;
             }
         }
-        else
+ 
+        if(thirdPersonScript.canPushMirror == true)
         {
             if(characterActions.Left.IsPressed)
             {
@@ -62,11 +66,21 @@ public class MirrorRotate : MonoBehaviour
             {
                 mirror.transform.Rotate(new Vector3(0, -1, 0));
             }
-            if (characterActions.RotateMirror.WasPressed == true)
+            if (characterActions.RotateMirror.IsPressed == true)
             {
                 thirdPersonScript.canPushMirror = false;
                 freeLookScript.SetTarget(player.transform);
                 wallClipScript.closestDistance = 0.5f;
+                timerSet = true;
+            }
+        }
+        else if (thirdPersonScript.canPushMirror == false && timerSet == false)
+        {
+            if (characterActions.RotateMirror.IsPressed == true && canPushMirror == true)
+            {
+                thirdPersonScript.canPushMirror = true;
+                freeLookScript.SetTarget(mirrorBase.transform);
+                wallClipScript.closestDistance = 5;
             }
         }
     }
