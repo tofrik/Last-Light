@@ -34,8 +34,7 @@ public class Puzzle : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(raySource.transform.position, raySource.transform.forward, out hit, Mathf.Infinity))
         {
-            if (hit.transform.tag == "Mirror")
-            {
+           
                 incidenceAngle = hit.point - raySource.transform.position;
                 reflectionAngle = Vector3.Reflect(incidenceAngle, hit.normal);
                 Debug.DrawRay(raySource.transform.position, hit.point - raySource.transform.position, Color.white);
@@ -48,7 +47,7 @@ public class Puzzle : MonoBehaviour
                     MirrorRayTest(hit, i);
                 }
                 return true;
-            }
+            
         }
         return false;
     }
