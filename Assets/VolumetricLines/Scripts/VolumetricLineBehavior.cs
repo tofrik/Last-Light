@@ -34,14 +34,14 @@ namespace VolumetricLines
 		/// </summary>
 		[SerializeField] 
 		[HideInInspector]
-		private Vector3 m_startPos;
+		public Vector3 m_startPos;
 		
 		/// <summary>
 		/// The end position relative to the GameObject's origin
 		/// </summary>
 		[SerializeField] 
 		[HideInInspector]
-		private Vector3 m_endPos = new Vector3(0f, 0f, 100f);
+		public Vector3 m_endPos = new Vector3(0f, 0f, 100f);
 
 		/// <summary>
 		/// Set to true to change the material's color to the color specified with "Line Color".

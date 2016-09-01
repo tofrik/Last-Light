@@ -5,7 +5,7 @@ using UnityStandardAssets.Cameras;
 
 namespace UnityStandardAssets.Characters.ThirdPerson
 {
-    [RequireComponent(typeof (ThirdPersonCharacter))]
+    [RequireComponent(typeof(ThirdPersonCharacter))]
     public class ThirdPersonUserControl : MonoBehaviour
     {
         private ThirdPersonCharacter m_Character; // A reference to the ThirdPersonCharacter on the object
@@ -19,6 +19,11 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         public bool canPushMirror = false;
         public bool closeMode = false;
         public bool lockedOn = false;
+        public bool dash = false;
+        public bool dashTimer = false;
+        float timer = 0;
+        public int dashCooldown = 1;
+
 
         private void Start()
         {
@@ -43,6 +48,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         private void Update()
         {
+
             if (!m_Jump)
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
@@ -60,9 +66,9 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             float v = CrossPlatformInputManager.GetAxis("Vertical");
             bool crouch = Input.GetKey(KeyCode.C);
 
-            
+
             m_Character.closeMode = false;
-            
+
             if (canPushMirror)
             {
                 h = 0;
@@ -91,14 +97,32 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             m_Move = v * fwd + h * right;
 #if !MOBILE_INPUT
             // walk speed multiplier
-            if (Input.GetKey(KeyCode.LeftShift)) m_Move *= 0.5f;
+            if (Input.GetKey(KeyCode.LeftAlt)) m_Move *= 0.5f;
 #endif
-
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                if (!dashTimer)
+                    dash = true;
+                dashTimer = true;
+            }
             // pass all parameters to the character control script
-            
-            m_Character.Move(m_Move, crouch, m_Jump);
+            if (dashTimer)
+            {
+                timer += Time.deltaTime;
+                if (timer > 0.15f)
+                {
+                    dash = false;
+                }
+                if (timer > dashCooldown)
+                {
+                    timer = 0;
+                    dashTimer = false;
+                }
+            }
+            m_Character.Move(m_Move, crouch, m_Jump, dash);
             m_Jump = false;
-            
+
+
         }
     }
 }
