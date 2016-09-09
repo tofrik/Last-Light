@@ -12,7 +12,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private Transform m_Cam;                  // A reference to the main camera in the scenes transform
         private Vector3 m_CamForward;             // The current forward direction of the camera
         private Vector3 m_Move;
-        private bool m_Jump;                      // the world-relative desired move direction, calculated from the camForward and user input.
+        public int m_Jump = 0;                      // the world-relative desired move direction, calculated from the camForward and user input.
+        public bool m_float = false;
 
         public GameObject camera;
         public FreeLookCam freeCamScript;
@@ -49,10 +50,31 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private void Update()
         {
 
-            if (!m_Jump)
+            if (m_Jump == 0 && m_Character.m_IsGrounded == true)
             {
-                m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+                if(CrossPlatformInputManager.GetButtonDown("Jump"))
+                {
+                    m_Jump++;
+                }
+               
             }
+            else if(m_Jump == 1 )
+            {
+                if (CrossPlatformInputManager.GetButtonDown("Jump"))
+                {
+                    m_Jump++;
+                }
+            }
+          
+                if (CrossPlatformInputManager.GetButton("Jump") == false)
+                {
+                    m_float = false;
+                }
+                else if(CrossPlatformInputManager.GetButton("Jump"))
+                {
+                    m_float = true;
+                }
+            
         }
 
 
@@ -119,8 +141,11 @@ namespace UnityStandardAssets.Characters.ThirdPerson
                     dashTimer = false;
                 }
             }
-            m_Character.Move(m_Move, crouch, m_Jump, dash);
-            m_Jump = false;
+            m_Character.Move(m_Move, crouch, m_Jump, dash, m_float);
+            if(m_Jump == 2 || m_Character.m_IsGrounded == true)
+            {
+                m_Jump = 0;
+            }
 
 
         }

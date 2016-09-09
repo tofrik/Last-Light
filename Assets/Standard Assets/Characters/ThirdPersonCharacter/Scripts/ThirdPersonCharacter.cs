@@ -17,6 +17,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         [SerializeField]
         float m_GravityMultiplier = 2f;
         [SerializeField]
+        float m_GravityMultiplierFloat = .2f;
+        [SerializeField]
         float m_RunCycleLegOffset = 0.2f; //specific to the character in sample assets, will need to be modified to work with others
         [SerializeField]
         float m_MoveSpeedMultiplier = 1f;
@@ -28,7 +30,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         Rigidbody m_Rigidbody;
         Animator m_Animator;
-        bool m_IsGrounded;
+        public bool m_IsGrounded;
         float m_OrigGroundCheckDistance;
         const float k_Half = 0.5f;
         float m_TurnAmount;
@@ -68,8 +70,10 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 
 
-        public void Move(Vector3 move, bool crouch, bool jump, bool _dash)
+        public void Move(Vector3 move, bool crouch, int jump, bool _dash, bool _float)
         {
+            Vector3 temp = move;
+            //Debug.Log(m_Rigidbody.velocity);
             dashBool = _dash;
             if (dashBool && timer <= 0.2f)
             {
@@ -99,7 +103,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             }
             else
             {
-                HandleAirborneMovement();
+                HandleAirborneMovement(jump, _float, temp);
             }
 
             ScaleCapsuleForCrouching(crouch);
@@ -188,20 +192,47 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         }
 
 
-        void HandleAirborneMovement()
+        void HandleAirborneMovement(int jump, bool _float, Vector3 move)
         {
-            // apply extra gravity from multiplier:
-            Vector3 extraGravityForce = (Physics.gravity * m_GravityMultiplier) - Physics.gravity;
-            m_Rigidbody.AddForce(extraGravityForce);
+            
+            if (jump == 2)
+            {
+                m_Rigidbody.velocity = new Vector3(m_Rigidbody.velocity.x, m_JumpPower, m_Rigidbody.velocity.z);
+                m_IsGrounded = false;
+                m_Animator.applyRootMotion = false;
+                m_GroundCheckDistance = 0.1f;
+            }
+            else if(_float && m_Rigidbody.velocity.y < 0)
+            {
+                Vector3 extraGravityForce = (Physics.gravity * m_GravityMultiplierFloat) - Physics.gravity;
+                m_Rigidbody.AddForce(extraGravityForce + move);
 
-            m_GroundCheckDistance = m_Rigidbody.velocity.y < 0 ? m_OrigGroundCheckDistance : 0.01f;
+                m_GroundCheckDistance = m_Rigidbody.velocity.y < 0 ? m_OrigGroundCheckDistance : 0.01f;
+               
+            }
+            else
+            {
+                
+                // apply extra gravity from multiplier:
+                Vector3 extraGravityForce = (Physics.gravity * m_GravityMultiplier) - Physics.gravity;
+                Vector3 v = (m_Animator.deltaPosition * m_MoveSpeedMultiplier) / Time.deltaTime;
+
+                // we preserve the existing y part of the current velocity.
+                //v.y = m_Rigidbody.velocity.y;
+                //m_Rigidbody.velocity = v;
+                //m_Rigidbody.velocity += extraGravityForce;
+                m_Rigidbody.AddForce(extraGravityForce);
+
+                m_GroundCheckDistance = m_Rigidbody.velocity.y < 0 ? m_OrigGroundCheckDistance : 0.01f;
+                
+            }
         }
 
 
-        void HandleGroundedMovement(bool crouch, bool jump)
+        void HandleGroundedMovement(bool crouch, int jump)
         {
             // check whether conditions are right to allow a jump:
-            if (jump && !crouch && m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Grounded"))
+            if (jump == 1 && !crouch && m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Grounded"))
             {
                 // jump!
                 m_Rigidbody.velocity = new Vector3(m_Rigidbody.velocity.x, m_JumpPower, m_Rigidbody.velocity.z);
@@ -243,6 +274,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
                 v.y = m_Rigidbody.velocity.y;
                 m_Rigidbody.velocity = v;
             }
+
         }
 
 
@@ -265,7 +297,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             {
                 m_IsGrounded = false;
                 m_GroundNormal = Vector3.up;
-                m_Animator.applyRootMotion = false;
+                m_Animator.applyRootMotion = true;
             }
         }
     }

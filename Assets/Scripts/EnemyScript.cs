@@ -5,17 +5,21 @@ public class EnemyScript : MonoBehaviour
 {
     public int startHealth = 100;
     public int currentHealth;
-    bool isDead = false;
+    public bool isDead = false;
     public float attackSpeed = 0.5f;
     public int attackDamage = 10;
     bool inRange;
     float timer;
     Health playerHealth;
     GameObject player;
+    Rigidbody m_Rigidbody;
+    NavMeshAgent nav;
     //EnemyHealth enemyHealth;
 	// Use this for initialization
 	void Start ()
     {
+        nav = GetComponent<NavMeshAgent>();
+        m_Rigidbody = GetComponent<Rigidbody>();
         currentHealth = startHealth;
         player = GameObject.FindGameObjectWithTag("Player");
         playerHealth = player.GetComponent<Health>();
@@ -32,6 +36,14 @@ public class EnemyScript : MonoBehaviour
         if(timer >= attackSpeed && inRange && currentHealth > 0)
         {
             //attack();
+        }
+        if(currentHealth > 0 && playerHealth.currenthealth > 0)
+        {
+            nav.SetDestination(player.transform.position);
+        }
+        else
+        {
+            nav.enabled = false;
         }
 
 	}
@@ -77,6 +89,8 @@ public class EnemyScript : MonoBehaviour
     {
         //play death animation here
         isDead = true;
+        m_Rigidbody.isKinematic = false;
+        m_Rigidbody.velocity = new Vector3(3, 10, 0);
 
     }
 }
