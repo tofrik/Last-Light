@@ -44,6 +44,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
             // get the third person character ( this should never be null due to require component )
             m_Character = GetComponent<ThirdPersonCharacter>();
+
         }
 
 
@@ -121,7 +122,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             // walk speed multiplier
             if (Input.GetKey(KeyCode.LeftAlt)) m_Move *= 0.5f;
 #endif
-            if (Input.GetKey(KeyCode.LeftShift))
+			if (Input.GetKey(KeyCode.LeftShift) && m_Character.m_IsGrounded == true)
             {
                 if (!dashTimer)
                     dash = true;
