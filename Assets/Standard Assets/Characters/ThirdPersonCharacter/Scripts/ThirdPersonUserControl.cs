@@ -45,6 +45,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
             // get the third person character ( this should never be null due to require component )
             m_Character = GetComponent<ThirdPersonCharacter>();
+
         }
 
 
@@ -123,7 +124,11 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             if (Input.GetKey(KeyCode.LeftAlt) && devMode) m_Move *= 5f;
             else if (Input.GetKey(KeyCode.LeftAlt)) m_Move *= 0.5f;
 #endif
+<<<<<<< HEAD
             if (Input.GetKey(KeyCode.LeftShift) && m_Character.m_IsGrounded)
+=======
+			if (Input.GetKey(KeyCode.LeftShift) && m_Character.m_IsGrounded == true)
+>>>>>>> 948d0e603f93e72faa9f821c7aa172350892ac30
             {
                 if (!dashTimer)
                     dash = true;
