@@ -44,9 +44,16 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         public float dashSpeed = 20;
         float timer = 0;
 
+        public Vector3 deltaPosition;
+
 
         public bool closeMode = false;
         public Transform target;
+
+        public Vector3 m_move;
+        public Vector3 m_RigidBodyV;
+
+        public bool devMode = false;
 
         void Start()
         {
@@ -62,6 +69,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         public void dash(Vector3 move)
         {
+
             timer = Time.deltaTime;
 
             m_Rigidbody.velocity = (move * dashSpeed);
@@ -72,6 +80,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         public void Move(Vector3 move, bool crouch, int jump, bool _dash, bool _float)
         {
+            m_move = move;
+            deltaPosition = m_Animator.deltaPosition;
             Vector3 temp = move;
             //Debug.Log(m_Rigidbody.velocity);
             dashBool = _dash;
@@ -266,13 +276,25 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         {
             // we implement this function to override the default root motion.
             // this allows us to modify the positional speed before it's applied.
-            if (m_IsGrounded && Time.deltaTime > 0)
+            if (m_IsGrounded && Time.deltaTime > 0 && !devMode)
             {
                 Vector3 v = (m_Animator.deltaPosition * m_MoveSpeedMultiplier) / Time.deltaTime;
 
                 // we preserve the existing y part of the current velocity.
                 v.y = m_Rigidbody.velocity.y;
                 m_Rigidbody.velocity = v;
+                m_RigidBodyV = m_Rigidbody.velocity;
+            }
+            else 
+            {
+                
+                Vector3 v = m_move / m_GravityMultiplierFloat;
+
+                // we preserve the existing y part of the current velocity.
+                v.y = m_Rigidbody.velocity.y;
+                m_Rigidbody.velocity = v;
+                m_RigidBodyV = m_Rigidbody.velocity;
+
             }
 
         }

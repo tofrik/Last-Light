@@ -24,6 +24,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         public bool dashTimer = false;
         float timer = 0;
         public int dashCooldown = 1;
+        public bool devMode = false;
 
 
         private void Start()
@@ -49,7 +50,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         private void Update()
         {
-
+            m_Character.devMode = devMode;
             if (m_Jump == 0 && m_Character.m_IsGrounded == true)
             {
                 if(CrossPlatformInputManager.GetButtonDown("Jump"))
@@ -119,13 +120,17 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             m_Move = v * fwd + h * right;
 #if !MOBILE_INPUT
             // walk speed multiplier
-            if (Input.GetKey(KeyCode.LeftAlt)) m_Move *= 0.5f;
+            if (Input.GetKey(KeyCode.LeftAlt) && devMode) m_Move *= 5f;
+            else if (Input.GetKey(KeyCode.LeftAlt)) m_Move *= 0.5f;
 #endif
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetKey(KeyCode.LeftShift) && m_Character.m_IsGrounded)
             {
                 if (!dashTimer)
                     dash = true;
+                
                 dashTimer = true;
+
+            
             }
             // pass all parameters to the character control script
             if (dashTimer)
